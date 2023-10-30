@@ -7,6 +7,10 @@ const moduleRoutes = [
     path: '/products',
     element: productRoutes,
   },
+  {
+    path: '/users',
+    element: productRoutes,
+  },
 ]
 
 moduleRoutes.forEach(route => router.use(route.path, route.element))
