@@ -1,21 +1,30 @@
-// import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express'
+import { authServices } from './auth.services'
+import config from '../../../config'
 
-// const createUser = (res:Response, req: Request, next: NextFunction ) => {
-//     try {
-//         const data = req.body;
+const logInUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = req.body
+    const result = await authServices.logInUser(data)
 
-//         const result =
-//         res.status(200).json({
-//             success: true,
-//             message: 'User created successfully',
-//             data: result
-//         })
+    const { refreshToken, ...others } = result
+    const cookieOptions = {
+      secure: config.env === 'production',
+      httpOnly: true,
+    }
 
-//     } catch(error) {
-//         next(error)
-//     }
-// };
+    res.cookie('refreshToken', refreshToken, cookieOptions)
 
-// export const authController = {
-//     createUser,
-// };
+    res.status(200).json({
+      success: true,
+      message: 'log In User successfully',
+      data: others,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const authController = {
+  logInUser,
+}
