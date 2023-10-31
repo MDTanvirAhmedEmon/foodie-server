@@ -1,4 +1,4 @@
-import jwt, { Secret } from 'jsonwebtoken'
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken'
 
 export const createToken = (
   payload: Record<string, unknown>,
@@ -6,4 +6,8 @@ export const createToken = (
   expireDuration: string,
 ): string => {
   return jwt.sign(payload, secret, { expiresIn: expireDuration })
+}
+
+export const verifyToken = (payload: string, secret: Secret): JwtPayload => {
+  return jwt.verify(payload, secret) as JwtPayload
 }
