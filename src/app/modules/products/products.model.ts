@@ -36,3 +36,20 @@ export const Products = model<IProducts, ProductModel>(
   'Products',
   productsSchema,
 )
+
+// const orderProductSchema = new Schema<IOrderProduct>({
+//   product:{
+//       type: Schema.Types.ObjectId,
+//       ref: "Product",
+//     },
+//   quantity: {
+//       type: Number,
+//       required: true,
+//     },
+
+// });
+
+// export type IOrderProduct = {
+//   product: Types.ObjectId | IProducts,
+//   quantity: number,
+// }

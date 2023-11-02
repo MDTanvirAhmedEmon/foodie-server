@@ -26,6 +26,46 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = req.body
+    const id = req.params.id
+    console.log(data, id)
+
+    const result = await userServices.updateUser(id, data)
+
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const data = req.user
+
+    const result = await userServices.getSingleUser(data)
+
+    res.status(200).json({
+      success: true,
+      message: 'Get single user successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   createUser,
+  updateUser,
+  getSingleUser,
 }

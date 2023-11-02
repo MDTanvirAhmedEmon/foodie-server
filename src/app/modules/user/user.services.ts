@@ -39,6 +39,18 @@ const createUser = async (data: IUser): Promise<any> => {
   }
 }
 
+const updateUser = async (id: any, data: Partial<IUser>): Promise<any> => {
+  const result = await User.findOneAndUpdate({ _id: id }, data, { new: true })
+  return result
+}
+
+const getSingleUser = async (data: any): Promise<IUser | null> => {
+  const result = await User.findOne({ email: data.email })
+  return result
+}
+
 export const userServices = {
   createUser,
+  updateUser,
+  getSingleUser,
 }
