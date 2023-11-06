@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose'
+import { Model, SortOrder, Types } from 'mongoose'
 import { IUser } from '../user/user.interface'
 
 export type IOrderProduct = {
@@ -23,3 +23,14 @@ export type IOrder = {
 }
 
 export type OrderModel = Model<IOrder, Record<string, unknown>>
+
+export type IpaginationOptions = {
+  page?: number | undefined
+  limit?: number | undefined
+  sortBy?: string | any
+  sortOrder?: SortOrder | any
+}
+
+export type Ifilter = {
+  searchTerm?: string | any
+}

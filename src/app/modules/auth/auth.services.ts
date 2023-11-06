@@ -30,6 +30,7 @@ const logInUser = async (data: any): Promise<any> => {
 
   const payloadData = {
     email: userExists?.email,
+    id: userExists?._id,
     role: userExists?.role,
   }
 

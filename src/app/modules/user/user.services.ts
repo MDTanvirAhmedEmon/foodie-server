@@ -18,6 +18,7 @@ const createUser = async (data: IUser): Promise<any> => {
 
   const tokenPayload = {
     email: result.email,
+    id: result._id,
     role: result.role,
   }
 
