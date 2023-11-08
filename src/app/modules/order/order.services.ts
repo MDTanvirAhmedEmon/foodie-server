@@ -1,7 +1,7 @@
 import { SortOrder } from 'mongoose'
+import { User } from '../user/user.model'
 import { IOrder, Ifilter, IpaginationOptions } from './order.interface'
 import { Order } from './order.model'
-import { User } from '../user/user.model'
 
 const createOrder = async (data: IOrder): Promise<IOrder> => {
   const result = await Order.create(data)
@@ -14,8 +14,8 @@ const getAllOrder = async (
   filter: Ifilter,
 ): Promise<any> => {
   // pagination
-  const page = paginationOption.page || 1
-  const limit = paginationOption.limit || 10
+  const page = Number(paginationOption.page || 1)
+  const limit = Number(paginationOption.limit || 10)
   const skip = (page - 1) * limit
 
   // sorting
@@ -30,48 +30,51 @@ const getAllOrder = async (
   const { searchTerm, ...filtersData } = filter
   const andCondition = []
 
-  if (searchTerm) {
-    andCondition.push(
-      {
-        'user.firstName': {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      },
-      {
-        'user.lastName': {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      },
-      {
-        'user.email': {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      },
-      {
-        'user.phone': {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      },
-    )
-  }
-  // const searchFields = [
-  //   'user.firstName', 'user.lastName', 'user.email', 'user.phone'
-  // ]
-
   // if (searchTerm) {
-  //   andCondition.push({
-  //     $or: searchFields.map(field => ({
-  //       [field]: {
+  //   andCondition.push(
+  //     {
+  //       'user.firstName': {
   //         $regex: searchTerm,
   //         $options: 'i',
   //       },
-  //     })),
-  //   })
+  //     },
+  //     {
+  //       'user.lastName': {
+  //         $regex: searchTerm,
+  //         $options: 'i',
+  //       },
+  //     },
+  //     {
+  //       'user.email': {
+  //         $regex: searchTerm,
+  //         $options: 'i',
+  //       },
+  //     },
+  //     {
+  //       'user.phone': {
+  //         $regex: searchTerm,
+  //         $options: 'i',
+  //       },
+  //     },
+  //   )
   // }
+  const searchFields = [
+    'user.firstName',
+    'user.lastName',
+    'user.email',
+    'user.phone',
+  ]
+
+  if (searchTerm) {
+    andCondition.push({
+      $or: searchFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    })
+  }
 
   if (Object.keys(filtersData).length) {
     andCondition.push({
@@ -88,14 +91,15 @@ const getAllOrder = async (
     return result
   } else {
     const result = await Order.find(whereConditions)
-      .sort(sortCondition)
-      .skip(skip)
-      .limit(limit)
       .populate({
         path: 'user',
         model: User,
       })
+      .sort(sortCondition)
+      .skip(skip)
+      .limit(limit)
     const total = await Order.countDocuments()
+
     return {
       meta: {
         page,
@@ -112,8 +116,17 @@ const getSingleOrder = async (id: string): Promise<IOrder | null> => {
   return result
 }
 
+const updateOrder = async (
+  id: string,
+  data: Partial<IOrder>,
+): Promise<IOrder | null> => {
+  const result = await Order.findByIdAndUpdate({ _id: id, data: data })
+  return result
+}
+
 export const orderServices = {
   createOrder,
   getAllOrder,
   getSingleOrder,
+  updateOrder,
 }

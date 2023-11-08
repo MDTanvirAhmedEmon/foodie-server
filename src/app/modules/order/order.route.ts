@@ -12,5 +12,6 @@ router.get(
   orderController.getAllOrder,
 )
 router.get('/:id', orderController.getSingleOrder)
+router.patch('/:id', orderController.updateOrder)
 
 export const orderRouters = router

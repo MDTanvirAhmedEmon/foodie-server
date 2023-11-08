@@ -39,6 +39,7 @@ const getAllOrder = async (req: Request, res: Response, next: NextFunction) => {
       'sortBy',
       'sortOrder',
     ])
+    console.log(paginationOptions)
 
     const data = req.user
     const result = await orderServices.getAllOrder(
@@ -76,8 +77,25 @@ const getSingleOrder = async (
   }
 }
 
+const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id
+    const data = req.body
+
+    const result = await orderServices.updateOrder(id, data)
+    res.status(200).json({
+      success: true,
+      message: 'updated order successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const orderController = {
   createOrder,
   getAllOrder,
   getSingleOrder,
+  updateOrder,
 }

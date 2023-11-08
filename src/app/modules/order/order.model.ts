@@ -19,6 +19,7 @@ const orderSchema = new Schema<IOrder, OrderModel>(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     product: [orderProductSchema],
     orderDate: {
