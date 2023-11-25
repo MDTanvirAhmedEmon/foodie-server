@@ -120,6 +120,23 @@ const latestOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const lastWeekOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await orderServices.lastWeekOrder()
+    res.status(200).json({
+      success: true,
+      message: 'get last week order successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const orderController = {
   createOrder,
   getAllOrder,
@@ -127,4 +144,5 @@ export const orderController = {
   updateOrder,
   getMyOrders,
   latestOrder,
+  lastWeekOrder,
 }

@@ -134,6 +134,35 @@ const latestOrder = async (): Promise<IOrder[]> => {
   return result
 }
 
+const lastWeekOrder = async (): Promise<IOrder[]> => {
+  const currentDate: any = new Date()
+  const oneWeekAgo = new Date(currentDate - 7 * 24 * 60 * 60 * 1000) // Subtract 7 days in milliseconds
+
+  const lastWeekOrders = await Order.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: oneWeekAgo, $lt: currentDate },
+      },
+    },
+    {
+      $unwind: '$products', // Assuming products is an array field in your order schema
+    },
+    {
+      $group: {
+        _id: {
+          date: { $dateToString: { format: '%m/%d/%Y', date: '$createdAt' } },
+        },
+        totalProducts: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { '_id.date': 1 },
+    },
+  ])
+
+  return lastWeekOrders
+}
+
 export const orderServices = {
   createOrder,
   getAllOrder,
@@ -141,4 +170,5 @@ export const orderServices = {
   updateOrder,
   getMyOrders,
   latestOrder,
+  lastWeekOrder,
 }
