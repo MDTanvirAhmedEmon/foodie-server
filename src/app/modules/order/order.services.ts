@@ -129,10 +129,16 @@ const updateOrder = async (
   return result
 }
 
+const latestOrder = async (): Promise<IOrder[]> => {
+  const result = await Order.find().sort({ createdAt: -1 }).limit(3)
+  return result
+}
+
 export const orderServices = {
   createOrder,
   getAllOrder,
   getSingleOrder,
   updateOrder,
   getMyOrders,
+  latestOrder,
 }

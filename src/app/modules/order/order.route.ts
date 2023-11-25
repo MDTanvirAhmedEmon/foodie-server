@@ -12,6 +12,7 @@ router.get(
   orderController.getAllOrder,
 )
 router.get('/my-order', auth(ENUM_USER_ROLE.USER), orderController.getMyOrders)
+router.get('/latest-order', orderController.latestOrder)
 router.get('/:id', orderController.getSingleOrder)
 router.patch('/:id', orderController.updateOrder)
 

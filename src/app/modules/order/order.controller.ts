@@ -107,10 +107,24 @@ const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const latestOrder = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await orderServices.latestOrder()
+    res.status(200).json({
+      success: true,
+      message: 'get latest order successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const orderController = {
   createOrder,
   getAllOrder,
   getSingleOrder,
   updateOrder,
   getMyOrders,
+  latestOrder,
 }
