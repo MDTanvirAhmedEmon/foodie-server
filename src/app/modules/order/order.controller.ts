@@ -32,16 +32,15 @@ const getAllOrder = async (req: Request, res: Response, next: NextFunction) => {
     // console.log(filter);
 
     const filter = pick(req.query, ['searchTerm', 'orderStatus'])
-    console.log(filter)
     const paginationOptions = pick(req.query, [
       'page',
       'limit',
       'sortBy',
       'sortOrder',
     ])
-    console.log(paginationOptions)
 
     const data = req.user
+
     const result = await orderServices.getAllOrder(
       data,
       paginationOptions,
@@ -58,6 +57,21 @@ const getAllOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const getMyOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = req.user
+
+    const result = await orderServices.getMyOrders(data)
+    res.status(200).json({
+      success: true,
+      message: 'get my orders successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getSingleOrder = async (
   req: Request,
   res: Response,
@@ -65,7 +79,7 @@ const getSingleOrder = async (
 ) => {
   try {
     const id = req.params.id
-    console.log(id)
+
     const result = await orderServices.getSingleOrder(id)
     res.status(200).json({
       success: true,
@@ -98,4 +112,5 @@ export const orderController = {
   getAllOrder,
   getSingleOrder,
   updateOrder,
+  getMyOrders,
 }

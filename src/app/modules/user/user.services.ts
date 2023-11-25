@@ -50,8 +50,14 @@ const getSingleUser = async (data: any): Promise<IUser | null> => {
   return result
 }
 
+const getAllUser = async (): Promise<IUser[]> => {
+  const result = await User.find({})
+  return result
+}
+
 export const userServices = {
   createUser,
   updateUser,
   getSingleUser,
+  getAllUser,
 }

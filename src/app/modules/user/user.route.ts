@@ -15,5 +15,6 @@ router.patch(
   auth(ENUM_USER_ROLE.USER),
   userController.updateUser,
 )
+router.get('/', auth(ENUM_USER_ROLE.ADMIN), userController.getAllUser)
 
 export const userRouters = router

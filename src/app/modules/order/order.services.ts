@@ -13,6 +13,8 @@ const getAllOrder = async (
   paginationOption: IpaginationOptions,
   filter: Ifilter,
 ): Promise<any> => {
+  console.log('services', data)
+
   // pagination
   const page = Number(paginationOption.page || 1)
   const limit = Number(paginationOption.limit || 10)
@@ -86,28 +88,31 @@ const getAllOrder = async (
 
   const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {}
 
+  const result = await Order.find(whereConditions)
+    .populate({
+      path: 'user',
+      model: User,
+    })
+    .sort(sortCondition)
+    .skip(skip)
+    .limit(limit)
+  const total = await Order.countDocuments()
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  }
+}
+
+const getMyOrders = async (data: any): Promise<any> => {
   if (data.role === 'user') {
     const result = await Order.find({ user: data.id }).populate('user')
+    console.log(result)
     return result
-  } else {
-    const result = await Order.find(whereConditions)
-      .populate({
-        path: 'user',
-        model: User,
-      })
-      .sort(sortCondition)
-      .skip(skip)
-      .limit(limit)
-    const total = await Order.countDocuments()
-
-    return {
-      meta: {
-        page,
-        limit,
-        total,
-      },
-      data: result,
-    }
   }
 }
 
@@ -120,7 +125,7 @@ const updateOrder = async (
   id: string,
   data: Partial<IOrder>,
 ): Promise<IOrder | null> => {
-  const result = await Order.findByIdAndUpdate({ _id: id, data: data })
+  const result = await Order.findByIdAndUpdate({ _id: id }, data, { new: true })
   return result
 }
 
@@ -129,4 +134,5 @@ export const orderServices = {
   getAllOrder,
   getSingleOrder,
   updateOrder,
+  getMyOrders,
 }

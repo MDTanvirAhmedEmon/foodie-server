@@ -11,6 +11,7 @@ router.get(
   auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.ADMIN),
   orderController.getAllOrder,
 )
+router.get('/my-order', auth(ENUM_USER_ROLE.USER), orderController.getMyOrders)
 router.get('/:id', orderController.getSingleOrder)
 router.patch('/:id', orderController.updateOrder)
 
