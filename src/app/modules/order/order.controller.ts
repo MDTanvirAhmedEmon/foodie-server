@@ -5,7 +5,6 @@ import pick from '../../../helpers/pick'
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body
-    console.log(data)
     const result = await orderServices.createOrder(data)
     res.status(200).json({
       success: true,

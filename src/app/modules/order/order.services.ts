@@ -13,8 +13,6 @@ const getAllOrder = async (
   paginationOption: IpaginationOptions,
   filter: Ifilter,
 ): Promise<any> => {
-  console.log('services', data)
-
   // pagination
   const page = Number(paginationOption.page || 1)
   const limit = Number(paginationOption.limit || 10)
@@ -24,42 +22,16 @@ const getAllOrder = async (
   const sortBy = paginationOption.sortBy || 'createdAt'
   const sortOrder = paginationOption.sortOrder || 'desc'
   const sortCondition: { [key: string]: SortOrder } = {}
+  // {createdAt: 'desc'}
 
   if (sortBy && sortOrder) {
     sortCondition[sortBy] = sortOrder
   }
+
   // searching
   const { searchTerm, ...filtersData } = filter
   const andCondition = []
 
-  // if (searchTerm) {
-  //   andCondition.push(
-  //     {
-  //       'user.firstName': {
-  //         $regex: searchTerm,
-  //         $options: 'i',
-  //       },
-  //     },
-  //     {
-  //       'user.lastName': {
-  //         $regex: searchTerm,
-  //         $options: 'i',
-  //       },
-  //     },
-  //     {
-  //       'user.email': {
-  //         $regex: searchTerm,
-  //         $options: 'i',
-  //       },
-  //     },
-  //     {
-  //       'user.phone': {
-  //         $regex: searchTerm,
-  //         $options: 'i',
-  //       },
-  //     },
-  //   )
-  // }
   const searchFields = [
     'user.firstName',
     'user.lastName',
@@ -94,6 +66,7 @@ const getAllOrder = async (
       model: User,
     })
     .sort(sortCondition)
+    // .sort({createdAt: 'desc'});
     .skip(skip)
     .limit(limit)
   const total = await Order.countDocuments()
