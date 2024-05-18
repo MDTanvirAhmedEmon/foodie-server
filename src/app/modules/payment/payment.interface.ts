@@ -4,6 +4,8 @@ import { IProducts } from '../products/products.interface'
 
 export type IPayment = {
   price: number
+  paymentStatus: string
+  transactionId: string
   user: Types.ObjectId | IUser
   product: Types.ObjectId | IProducts
 }
