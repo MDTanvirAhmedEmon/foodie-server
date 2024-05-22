@@ -4,6 +4,7 @@ import { IOrder, Ifilter, IpaginationOptions } from './order.interface'
 import { Order } from './order.model'
 
 const createOrder = async (data: IOrder): Promise<IOrder> => {
+  console.log(data)
   const result = await Order.create(data)
   return result
 }
