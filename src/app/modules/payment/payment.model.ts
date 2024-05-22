@@ -20,9 +20,9 @@ const paymentSchema = new Schema<IPayment, PaymentModel>(
       ref: 'User',
       required: true,
     },
-    product: {
+    order: {
       type: Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: 'Order',
       required: true,
     },
   },
@@ -31,4 +31,4 @@ const paymentSchema = new Schema<IPayment, PaymentModel>(
   },
 )
 
-export const User = model<IPayment, PaymentModel>('Payment', paymentSchema)
+export const Payment = model<IPayment, PaymentModel>('Payment', paymentSchema)

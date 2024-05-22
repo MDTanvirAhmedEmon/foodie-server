@@ -4,8 +4,8 @@ import { paymentServices } from './payment.services'
 const makePayment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body
-    console.log(data)
     const result = await paymentServices.makePayment(data)
+    console.log(result)
     res.status(200).json({
       success: true,
       message: 'Payment successfully',
@@ -16,6 +16,19 @@ const makePayment = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const webHooks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await paymentServices.webHooks(req.query)
+    res.status(200).json({
+      success: true,
+      message: 'webHooks successfully',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 export const paymentController = {
   makePayment,
+  webHooks,
 }
