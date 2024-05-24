@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import axios from 'axios'
+
 import config from '../../../config'
 import ApiError from '../../../errors/ApiError'
 import { Payment } from './payment.model'
-import SSLCommerzPayment from 'sslcommerz-lts'
-
+const SSLCommerzPayment = require('sslcommerz-lts')
 import { Order } from '../order/order.model'
+import { Response } from 'express'
 
 const is_live = false //true for live, false for sandbox
 
@@ -20,8 +21,8 @@ const makePayment = async (cus_data: any) => {
       total_amount: cus_data.allOrderInfo.total_amount,
       currency: 'BDT',
       tran_id: transactionId, // use unique tran_id for each api call
-      success_url: 'http://localhost:3000/thank-you',
-      fail_url: 'http://localhost:3030/fail',
+      success_url: `https://foodie-server-red.vercel.app/api/v1/payment/payment-success/${transactionId}`,
+      fail_url: `https://foodie-server-red.vercel.app/api/v1/payment/payment-fail/${transactionId}`,
       cancel_url: 'http://localhost:3030/cancel',
       ipn_url: 'http://localhost:3030/ipn',
       shipping_method: 'N/A',
@@ -36,12 +37,12 @@ const makePayment = async (cus_data: any) => {
       cus_postcode: cus_data.allOrderInfo.cus_postcode,
       cus_country: cus_data.allOrderInfo.cus_country,
       cus_phone: cus_data.allOrderInfo.cus_phone,
-      cus_fax: '01711111111',
-      ship_name: 'Customer Name',
-      ship_add1: 'Dhaka',
-      ship_add2: 'Dhaka',
-      ship_city: 'Dhaka',
-      ship_state: 'Dhaka',
+      cus_fax: 'N/A',
+      ship_name: 'N/A',
+      ship_add1: 'N/A',
+      ship_add2: 'N/A',
+      ship_city: 'N/A',
+      ship_state: 'N/A',
       ship_postcode: 1000,
       ship_country: 'Bangladesh',
     }
@@ -80,40 +81,26 @@ const makePayment = async (cus_data: any) => {
   }
 }
 
-const webHooks = async (data: any) => {
-  try {
-    if (!data || !data.status || data?.status !== 'VALID') {
-      return {
-        message: 'Invalid payment',
-      }
-    }
+const paymentSuccess = async (tranId: any, res: Response) => {
+  const result = await Payment.findOneAndUpdate(
+    { transactionId: tranId },
+    { paymentStatus: 'paid' },
+  )
+  if (result) {
+    res.redirect('https://stellar-sunflower-9a74d4.netlify.app/thank-you')
+  }
+}
 
-    const res = await axios({
-      method: 'GET',
-      url: `${config.sslValidateUrl}?val_id=${data.val_id}&store_id=${config.store_id}&store_password=${config.store_password}&format=json`,
-    })
-
-    if (res?.data?.status !== 'VALID') {
-      return {
-        message: 'Invalid payment',
-      }
-    }
-
-    const { tran_id } = res.data
-
-    const updatedPayment = await Payment.findOneAndUpdate(
-      { transactionId: tran_id },
-      { paymentStatus: 'paid' },
-    )
-    return {
-      message: 'Payment successful',
-    }
-  } catch (error) {
-    throw new ApiError(400, 'payment error')
+const paymentFail = async (tranId: any, res: Response) => {
+  console.log(tranId)
+  const result = await Payment.findOneAndDelete({ transactionId: tranId })
+  if (result) {
+    res.redirect('https://stellar-sunflower-9a74d4.netlify.app/payment-fail')
   }
 }
 
 export const paymentServices = {
   makePayment,
-  webHooks,
+  paymentSuccess,
+  paymentFail,
 }

@@ -16,19 +16,40 @@ const makePayment = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-const webHooks = async (req: Request, res: Response, next: NextFunction) => {
+const paymentSuccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const result = await paymentServices.webHooks(req.query)
+    const tranId = req.params.tranId
+    const result = await paymentServices.paymentSuccess(tranId, res)
     res.status(200).json({
       success: true,
-      message: 'webHooks successfully',
+      message: 'payment successfully',
       data: result,
     })
   } catch (error) {
     next(error)
   }
 }
+
+const paymentFail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const tranId = req.params.tranId
+    const result = await paymentServices.paymentFail(tranId, res)
+    res.status(200).json({
+      success: true,
+      message: 'payment failed',
+      data: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const paymentController = {
   makePayment,
-  webHooks,
+  paymentSuccess,
+  paymentFail,
 }
