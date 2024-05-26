@@ -89,7 +89,7 @@ const getAllOrder = (data, paginationOption, filter) => __awaiter(void 0, void 0
 });
 const getMyOrders = (data) => __awaiter(void 0, void 0, void 0, function* () {
     if (data.role === 'user') {
-        const result = yield order_model_1.Order.find({ user: data.id }).populate('user');
+        const result = yield order_model_1.Order.find({ user: data.id }).populate('user').sort({ createdAt: 'desc' });
         console.log(result);
         return result;
     }

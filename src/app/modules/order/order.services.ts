@@ -84,7 +84,9 @@ const getAllOrder = async (
 
 const getMyOrders = async (data: any): Promise<any> => {
   if (data.role === 'user') {
-    const result = await Order.find({ user: data.id }).populate('user')
+    const result = await Order.find({ user: data.id })
+      .populate('user')
+      .sort({ createdAt: 'desc' })
     console.log(result)
     return result
   }
